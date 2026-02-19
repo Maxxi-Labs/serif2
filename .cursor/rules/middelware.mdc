@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+Middelware.ts has now changed to proxy in Next.js 16 - docs: https://nextjs.org/docs/app/getting-started/proxy
