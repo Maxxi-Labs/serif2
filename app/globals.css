@@ -124,3 +124,37 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* TipTap editor content styles */
+.tiptap-content {
+  @apply min-h-[320px] w-full text-sm leading-relaxed outline-none;
+
+  h2 {
+    @apply mt-6 mb-2 text-xl font-semibold tracking-tight;
+  }
+  h3 {
+    @apply mt-5 mb-2 text-lg font-semibold tracking-tight;
+  }
+  p {
+    @apply my-2;
+  }
+  ul {
+    @apply my-2 ml-5 list-disc space-y-1;
+  }
+  ol {
+    @apply my-2 ml-5 list-decimal space-y-1;
+  }
+  strong {
+    @apply font-semibold;
+  }
+  em {
+    @apply italic;
+  }
+  a {
+    @apply text-primary underline underline-offset-4;
+  }
+  p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    @apply pointer-events-none float-left h-0 text-muted-foreground;
+  }
+}
