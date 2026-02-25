@@ -14,18 +14,18 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="container relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center gap-6 px-4 py-24 md:py-32">
-        <h1 className="text-3xl font-bold tracking-tighter text-white sm:text-4xl md:text-5xl lg:text-6xl font-serif">
+      <div className="container relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center gap-6 px-4 py-20 sm:py-24 md:py-32">
+        <h1 className="text-2xl font-bold tracking-tighter text-white sm:text-4xl md:text-5xl lg:text-6xl font-serif">
           The Future of AI Blogging.
         </h1>
-        <p className="max-w-[700px] text-gray-200 md:text-xl">
+        <p className="max-w-[700px] text-sm text-gray-200 sm:text-base md:text-xl">
           Serif is the ultimate platform for AI enthusiasts and developers to share insights, tutorials, and breakthroughs in artificial intelligence.
         </p>
-        <div className="flex gap-4">
-          <Button size="lg" asChild className="bg-white text-black hover:bg-gray-200">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4">
+          <Button size="lg" asChild className="w-full sm:w-auto bg-white text-black hover:bg-gray-200">
             <Link href="/auth/sign-up">Start Writing</Link>
           </Button>
-          <Button variant="outline" size="lg" asChild className="bg-transparent border-white text-white hover:bg-white/10 hover:text-white">
+          <Button variant="outline" size="lg" asChild className="w-full sm:w-auto bg-transparent border-white text-white hover:bg-white/10 hover:text-white">
             <Link href="/auth/login">Log in</Link>
           </Button>
         </div>
