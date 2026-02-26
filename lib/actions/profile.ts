@@ -11,7 +11,7 @@ async function getAuthenticatedUserId(): Promise<string> {
   return data.claims.sub as string
 }
 
-export async function updateProfile(formData: { first_name?: string; avatar_url?: string | null }): Promise<void> {
+export async function updateProfile(formData: { first_name?: string | null; avatar_url?: string | null }): Promise<void> {
   const supabase = await createClient()
   const userId = await getAuthenticatedUserId()
 
