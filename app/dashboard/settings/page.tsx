@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 
+import { ProfileSettingsForm } from '@/components/profile-settings-form'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -25,8 +26,7 @@ export default async function DashboardSettingsPage() {
     profile = data
   }
 
-  const displayName =
-    profile?.first_name ?? (typeof authData.claims.email === 'string' ? authData.claims.email : 'No name set')
+  const email = typeof authData.claims.email === 'string' ? authData.claims.email : ''
 
   return (
     <div className="space-y-6">
@@ -41,19 +41,16 @@ export default async function DashboardSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Public profile</CardTitle>
-          <CardDescription>Your profile information from the profiles table.</CardDescription>
+          <CardDescription>
+            Your name and avatar are visible to blog readers. Update them below.
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4 text-sm">
-          <div className="space-y-1">
-            <p className="font-medium">Display name</p>
-            <p className="text-muted-foreground rounded-md border px-3 py-2">{displayName}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="font-medium">Bio</p>
-            <p className="text-muted-foreground rounded-md border px-3 py-2">
-              Writer focused on clean interfaces, product storytelling, and technical content.
-            </p>
-          </div>
+        <CardContent>
+          <ProfileSettingsForm
+            initialFirstName={profile?.first_name ?? null}
+            initialAvatarUrl={profile?.avatar_url ?? null}
+            email={email}
+          />
         </CardContent>
       </Card>
 
