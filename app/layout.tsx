@@ -14,7 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Serif 2",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://yourdomain.com"),
+  title: {
+    default: "Serif 2",
+    template: "%s | Serif 2",
+  },
   description: "A minimal, focused blogging platform designed for writers who want to share their ideas without distractions.",
 };
 

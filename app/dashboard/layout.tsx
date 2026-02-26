@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { House, NotebookPen, Settings } from 'lucide-react'
+import { House, NotebookPen, Settings, BookOpen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -22,6 +22,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Home', icon: House },
   { href: '/dashboard/blogs', label: 'Blogs', icon: NotebookPen },
+  { href: '/blog', label: 'View Blog', icon: BookOpen },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ]
 
