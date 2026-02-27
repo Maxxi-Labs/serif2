@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { JSONContent } from "@/lib/actions/blogs";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -16,7 +17,7 @@ interface BlogPostPageProps {
 }
 
 export async function generateStaticParams() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   const { data: blogs } = await supabase
     .from("blogs")
