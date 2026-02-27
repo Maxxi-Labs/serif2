@@ -17,8 +17,13 @@ interface BlogPostPageProps {
 }
 
 export async function generateStaticParams() {
-  const supabase = createStaticClient();
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) {
+    return [];
+  }
 
+  const supabase = createStaticClient();
   const { data: blogs } = await supabase
     .from("blogs")
     .select("slug")
