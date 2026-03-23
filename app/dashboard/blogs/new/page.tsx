@@ -1,10 +1,29 @@
 import Link from 'next/link'
-import { FilePenLine, Sparkles } from 'lucide-react'
+import { FilePenLine, Sparkles, Crown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { createClient } from '@/lib/supabase/server'
 
-export default function NewBlogPage() {
+async function getIsProUser(): Promise<boolean> {
+  const supabase = await createClient()
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub
+  if (!userId) return false
+
+  const { data } = await supabase
+    .from('subscriptions')
+    .select('status')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .maybeSingle()
+
+  return !!data
+}
+
+export default async function NewBlogPage() {
+  const isPro = await getIsProUser()
+
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div className="space-y-1">
@@ -30,20 +49,32 @@ export default function NewBlogPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={!isPro ? 'opacity-80' : undefined}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="size-4" />
               Create with AI
+              {!isPro && (
+                <span className="ml-auto flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                  <Crown className="size-3" />
+                  Pro
+                </span>
+              )}
             </CardTitle>
             <CardDescription>
               Generate a complete draft post with GPT-5.1 from a single prompt.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button asChild className="w-full" variant="secondary">
-              <Link href="/dashboard/blogs/new/ai">Generate with AI</Link>
-            </Button>
+            {isPro ? (
+              <Button asChild className="w-full" variant="secondary">
+                <Link href="/dashboard/blogs/new/ai">Generate with AI</Link>
+              </Button>
+            ) : (
+              <Button asChild className="w-full" variant="secondary">
+                <Link href="/pricing">Upgrade to Pro</Link>
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
