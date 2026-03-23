@@ -5,6 +5,19 @@ import { createServiceClient } from '@/lib/supabase/service'
 
 export const dynamic = 'force-dynamic'
 
+/** Subscription id on Invoice (Stripe types use parent.subscription_details; webhooks may still send legacy top-level). */
+function getInvoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
+  const nested = invoice.parent?.subscription_details?.subscription
+  if (nested) {
+    return typeof nested === 'string' ? nested : nested.id
+  }
+  const legacy = (
+    invoice as Stripe.Invoice & { subscription?: string | Stripe.Subscription | null }
+  ).subscription
+  if (!legacy) return null
+  return typeof legacy === 'string' ? legacy : legacy.id
+}
+
 export async function POST(request: Request) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
@@ -93,10 +106,13 @@ export async function POST(request: Request) {
         // Skip the initial checkout invoice — already recorded via checkout.session.completed
         if (invoice.billing_reason === 'subscription_create') break
 
+        const subscriptionId = getInvoiceSubscriptionId(invoice)
+        if (!subscriptionId) break
+
         const { data: sub } = await supabase
           .from('subscriptions')
           .select('user_id')
-          .eq('stripe_subscription_id', invoice.subscription as string)
+          .eq('stripe_subscription_id', subscriptionId)
           .maybeSingle()
 
         await supabase.from('transactions').insert({
@@ -107,7 +123,7 @@ export async function POST(request: Request) {
           currency: invoice.currency,
           status: 'paid',
           stripe_customer_id: invoice.customer as string | null,
-          stripe_subscription_id: invoice.subscription as string | null,
+          stripe_subscription_id: subscriptionId,
           raw_data: event.data.object,
         })
         break
@@ -116,10 +132,13 @@ export async function POST(request: Request) {
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
 
+        const subscriptionId = getInvoiceSubscriptionId(invoice)
+        if (!subscriptionId) break
+
         const { data: sub } = await supabase
           .from('subscriptions')
           .select('user_id')
-          .eq('stripe_subscription_id', invoice.subscription as string)
+          .eq('stripe_subscription_id', subscriptionId)
           .maybeSingle()
 
         await supabase.from('transactions').insert({
@@ -130,7 +149,7 @@ export async function POST(request: Request) {
           currency: invoice.currency,
           status: 'failed',
           stripe_customer_id: invoice.customer as string | null,
-          stripe_subscription_id: invoice.subscription as string | null,
+          stripe_subscription_id: subscriptionId,
           raw_data: event.data.object,
         })
         break
