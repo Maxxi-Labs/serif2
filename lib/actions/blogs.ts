@@ -181,6 +181,19 @@ export async function createBlog(formData: BlogFormData): Promise<{ id: string }
 export async function createBlogWithAI(prompt: string): Promise<{ id: string }> {
   const supabase = await createClient()
   const userId = await getAuthenticatedUserId()
+
+  // Verify the user has an active Pro subscription
+  const { data: sub } = await supabase
+    .from('subscriptions')
+    .select('status')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .maybeSingle()
+
+  if (!sub) {
+    throw new Error('An active Pro subscription is required to use AI blog generation.')
+  }
+
   const normalizedPrompt = prompt.trim()
 
   if (!normalizedPrompt) {
